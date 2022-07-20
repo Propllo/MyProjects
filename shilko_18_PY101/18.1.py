@@ -77,6 +77,7 @@ def file_na(path: str):
 def counter(fu):
     """Декоратор. Отвечает за наполнение словаря и проверку на дубликат
     """
+
     def email(s: str):
         """Функция декоратора вырезающая email если он есть
 
@@ -93,7 +94,7 @@ def counter(fu):
         :return список чисел (lst)"""
         dig = re.findall('[0-9]{3,4}', s)
         lst = []
-        for i in dig:   # список цифры которых от 3-х до 4-х значений и отсеиваем все что не с 3-мя
+        for i in dig:  # список цифры которых от 3-х до 4-х значений и отсеиваем все что не с 3-мя
             if len(i) == 3:
                 i = int(i)
                 lst.append(i)
@@ -106,10 +107,10 @@ def counter(fu):
         x - список информации о файле(list)
         :return строка спаршеной информации"""
         res = x
-        if res[3] == '.csv':    # пробегаемся по расширениям и переводим все в одну строку
+        if res[3] == '.csv':  # пробегаемся по расширениям и переводим все в одну строку
             with open(res[1], encoding='UTF-8') as file:
                 reader = csv.reader(file)
-                read_list = list(reader)
+                read_list = list(reader)  # получаем лист и избавляемся от мусора
                 reader = ''
                 for i in read_list:
                     for j in i:
@@ -121,7 +122,7 @@ def counter(fu):
             with open(res[1], encoding='UTF-8') as file:
                 reader = dict(json.load(file))
                 reader_str = ''
-                for i in reader.items():
+                for i in reader.items():  # вытаскиваем картежи и из их содержимых составляем строку
                     for j in i:
                         j = str(j)
                         j = j.replace('\n', '')
@@ -131,7 +132,7 @@ def counter(fu):
             with open(res[1], encoding='UTF-8') as file:
                 reader = file.readlines()
                 reader_str = ''
-                for i in reader:
+                for i in reader:  # обьеденем лайны
                     i = str(i).replace('\n', '')
                     reader_str += f'{i} '
                 return reader_str
@@ -151,6 +152,8 @@ def counter(fu):
         read = read_str(res)
         digits_3(read)
         email(read)
+        print(di)
+        print('-' * 100)
         return fu
 
     di = {}
