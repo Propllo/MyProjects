@@ -8,9 +8,16 @@ HEADS = {
 
 
 def Pars_Gecko(name_coin: str) -> list or False:
+    """Функция осуществляющая поиск указанного токена пользователем
+
+    name_coin - название токена (str)
+    info_coin - список найденной информации о токене (list)
+    url - ссылка на страницу сайта (str)
+    data - изъятый набор информации со страницы сайта (list)
+    price_coin - цена токена на данный момент (float)
+    :returns False - если токен не найден или info_coin - информацию о токене"""
     info_coin = []
     url = f"https://www.coingecko.com/en/coins/{name_coin.lower().strip().replace(' ', '-')}"
-    print(url)
     response = requests.get(url, HEADS)
     soup = BeautifulSoup(response.text, 'lxml')
     data = soup.find_all('div', class_="tw-col-span-2 md:tw-col-span-2")
