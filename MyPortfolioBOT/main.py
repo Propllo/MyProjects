@@ -65,18 +65,16 @@ async def count_tokens(message: types.Message, state=FSMContext):
     try:
         answer = int(message.text)
     except:
-        await bot.send_message(message.chat.id, text='Должно быть целое число. Начните заново',
+        await bot.send_message(message.chat.id, text='Должно быть целое число. Перевыберите',
                                reply_markup=keyboard.start)
-        await state.finish()
+        await Buy.q2.set()
     if answer == 1 or answer == 2:
-        print(answer, 1)
         await state.update_data(choice=answer)
         await message.answer('Введите кол-во:')
         await Buy.q3.set()
     else:
-        print(answer, 2)
-        await bot.send_message(message.chat.id, text='Такого нету. Начните заново', reply_markup=keyboard.start)
-        await state.finish()
+        await bot.send_message(message.chat.id, text='Такого нету. Перевыберите', reply_markup=keyboard.start)
+        await Buy.q2.set()
 
 
 @dp.message_handler(state=Buy.q3)
@@ -90,16 +88,16 @@ async def mark(message: types.Message, state=FSMContext):
     try:
         answer = float(answer)
     except:
-        await bot.send_message(message.chat.id, text='Это не число. Начните заново', reply_markup=keyboard.start)
-        await state.finish()
+        await bot.send_message(message.chat.id, text='Это не число. Перевыберите', reply_markup=keyboard.start)
+        await Buy.q3.set()
     if answer >= 0:
         await state.update_data(count=answer)
         await message.answer('Введите пометку(кошелек):')
         await Buy.q4.set()
     else:
-        await bot.send_message(message.chat.id, 'Если хотите убрать некоторое кол-во нажмите <Продать>',
+        await bot.send_message(message.chat.id, 'Число не должно быть меньше нуля. Перевыберите',
                                reply_markup=keyboard.start)
-        await state.finish()
+        await Buy.q3.set()
 
 
 @dp.message_handler(state=Buy.q4)
@@ -140,9 +138,9 @@ async def choice(message: types.Message, state=FSMContext):
     try:
         answer = info[int(message.text)]
     except:
-        await bot.send_message(message.chat.id, text='Такого нет. Введите число из предложенного списка.',
+        await bot.send_message(message.chat.id, text='Такого нет.',
                                reply_markup=keyboard.start)
-        await Sell.q1.set()
+        await state.finish()
     else:
         await state.update_data(token=answer)
         price = buy.Pars_Gecko(answer[:answer.find('(')])
@@ -173,9 +171,8 @@ async def count_tokens(message: types.Message, state=FSMContext):
 
 
 @dp.message_handler(state=Sell.q3)
-async def save_data2(message: types.Message, state=FSMContext):
+async def save_data(message: types.Message, state=FSMContext):
     answer = message.text
-    print(answer)
     answer = answer.replace(',', '.')
     try:
         answer = float(answer)
@@ -185,7 +182,8 @@ async def save_data2(message: types.Message, state=FSMContext):
     if answer >= 0:
         await state.update_data(count=answer)
         data = await state.get_data()
-        print(data)
+        data_script.data_sell(message.chat.id, data)
+        await bot.send_message(message.chat.id, text='Изменения добавлены', reply_markup=keyboard.start)
         await state.finish()
     else:
         await bot.send_message(message.chat.id, 'Число не должно быть меньше нуля. Перевыберите',

@@ -53,13 +53,14 @@ def save_data(id: int, dict_info: dict):
         cursor.execute(f"SELECT Count FROM id_{id} WHERE Name_Token = (?)", (dict_info['token'],))
         old_count_token = cursor.fetchall()[0][0]
         count_token = dict_info['count'] + old_count_token
-        cursor.execute(f"UPDATE id_{id} SET Prise = {dict_info['price']}")
+        cursor.execute(f"UPDATE id_{id} SET Prise = {dict_info['price']} WHERE Name_Token = (?)", (dict_info['token'],))
         conn.commit()
-        cursor.execute(f"UPDATE id_{id} SET Count = {count_token}")
+        cursor.execute(f"UPDATE id_{id} SET Count = {count_token} WHERE Name_Token = (?)", (dict_info['token'],))
         conn.commit()
-        cursor.execute(f"UPDATE id_{id} SET Note = (?)", (dict_info['mark'],))
+        cursor.execute(f"UPDATE id_{id} SET Note = (?) WHERE Name_Token = (?)", (dict_info['mark'], dict_info['token']))
         conn.commit()
-        cursor.execute(f"UPDATE id_{id} SET Total = {dict_info['price'] * count_token}")
+        cursor.execute(f"UPDATE id_{id} SET Total = {dict_info['price'] * count_token} WHERE Name_Token = (?)",
+                       (dict_info['token'],))
         conn.commit()
 
     def update_dollar():
@@ -72,13 +73,14 @@ def save_data(id: int, dict_info: dict):
         cursor.execute(f"SELECT Count FROM id_{id} WHERE Name_Token = (?)", (dict_info['token'],))
         old_count_t = cursor.fetchall()[0][0]
         count_token = dict_info['count'] / dict_info['price'] + old_count_t
-        cursor.execute(f"UPDATE id_{id} SET Prise = {dict_info['price']}")
+        cursor.execute(f"UPDATE id_{id} SET Prise = {dict_info['price']} WHERE Name_Token = (?)", (dict_info['token'],))
         conn.commit()
-        cursor.execute(f"UPDATE id_{id} SET Count = {count_token}")
+        cursor.execute(f"UPDATE id_{id} SET Count = {count_token} WHERE Name_Token = (?)", (dict_info['token'],))
         conn.commit()
-        cursor.execute(f"UPDATE id_{id} SET Note = (?)", (dict_info['mark'],))
+        cursor.execute(f"UPDATE id_{id} SET Note = (?) WHERE Name_Token = (?)", (dict_info['mark'], dict_info['token']))
         conn.commit()
-        cursor.execute(f"UPDATE id_{id} SET Total = {dict_info['price'] * count_token}")
+        cursor.execute(f"UPDATE id_{id} SET Total = {dict_info['price'] * count_token} WHERE Name_Token = (?)",
+                       (dict_info['token'],))
         conn.commit()
 
     conn = sqlite3.connect('data.db')
@@ -105,3 +107,58 @@ def save_data(id: int, dict_info: dict):
             token()
         else:
             dollar()
+
+
+def data_sell(id: int, dict_info: dict):
+    def token_sell():
+        cursor.execute(f"SELECT Count FROM id_{id} WHERE Name_Token = (?)", (dict_info['token'],))
+        old_count_token = cursor.fetchall()[0][0]
+        new_count = old_count_token - dict_info['count']
+        if new_count <= 0:
+            cursor.execute(f"DELETE FROM id_{id} WHERE Name_Token = (?)", (dict_info['token'],))
+            conn.commit()
+        else:
+            cursor.execute(f"UPDATE id_{id} SET Count = {new_count} WHERE Name_Token = (?)", (dict_info['token'],))
+            conn.commit()
+            cursor.execute(f"UPDATE id_{id} SET Prise = {dict_info['prise']} WHERE Name_Token = (?)",
+                           (dict_info['token'],))
+            conn.commit()
+            cursor.execute(f"UPDATE id_{id} SET Total = {new_count * dict_info['prise']} WHERE Name_Token = (?)",
+                           (dict_info['token'],))
+            conn.commit()
+
+    def dollar_sell():
+        cursor.execute(f"SELECT Count FROM id_{id} WHERE Name_Token = (?)", (dict_info['token'],))
+        old_count_token = cursor.fetchall()[0][0]
+        new_count = old_count_token - dict_info['count'] / dict_info['prise']
+        if new_count <= 0:
+            cursor.execute(f"DELETE FROM id_{id} WHERE Name_Token = (?)", (dict_info['token'],))
+            conn.commit()
+        else:
+            cursor.execute(f"UPDATE id_{id} SET Count = {new_count} WHERE Name_Token = (?)", (dict_info['token'],))
+            conn.commit()
+            cursor.execute(f"UPDATE id_{id} SET Prise = {dict_info['prise']} WHERE Name_Token = (?)",
+                           (dict_info['token'],))
+            conn.commit()
+            cursor.execute(f"UPDATE id_{id} SET Total = {new_count * dict_info['prise']} WHERE Name_Token = (?)",
+                           (dict_info['token'],))
+            conn.commit()
+
+    conn = sqlite3.connect('D:\Projects PYTHON\MyPortfolioBOT\data.db')
+    cursor = conn.cursor()
+
+    cursor.execute(f'''CREATE TABLE IF NOT EXISTS
+                        id_{id}(
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        Name_Token TEXT,
+                        Prise REAL,
+                        Count REAL,
+                        Note TEXT,
+                        Total REAL
+                        )
+                        ''')
+
+    if dict_info['choice'] == 1:
+        token_sell()
+    else:
+        dollar_sell()
