@@ -1,7 +1,7 @@
 import sqlite3
 
 
-def check_db(id_user: int = 390226986) -> str:
+def check_db(id_user: int) -> str:
     """Функция обработки информации в БД
 
     id_user - id пользователя (int)
@@ -38,14 +38,14 @@ def check_db(id_user: int = 390226986) -> str:
         return create_info(data)
 
 
-def total_money(id_user: int = 390226986) -> int:
+def total_money(id_user: int) -> int:
     """Функция подсчитывающая ценность портфеля
 
     id_user - id пользователя (int)
     total - ценность портфеля (float)
     :return ценность портфеля (float)
     """
-    conn = sqlite3.connect('D:\Projects PYTHON\MyPortfolioBOT\data.db')
+    conn = sqlite3.connect('data.db')
     cursor = conn.cursor()
 
     total = 0
