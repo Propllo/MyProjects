@@ -1,4 +1,0 @@
-1. Хабр: https://habr.com/ru/hub/python/
-2. Марк Лутц. Изучаем Python: https://codernet.ru/books/python/izuchaem_python_4-e_izdanie_mark_lutc/
-3. CodeWar: https://www.codewars.com/
-4. Преподаватель Roman Zmushko: https://www.linkedin.com/in/rvz2021/
