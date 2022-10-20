@@ -7,7 +7,7 @@ HEADS = {
 }
 
 
-def Pars_Gecko(name_coin: str) -> list or False:
+def pars_gecko(name_coin: str) -> list or False:
     """Функция осуществляющая поиск указанного токена пользователем
 
     name_coin - название токена (str)

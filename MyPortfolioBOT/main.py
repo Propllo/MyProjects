@@ -48,7 +48,7 @@ async def choice(message: types.Message, state=FSMContext):
         await message.answer('Введите название, а не число.')
         await Buy.q1.set()
     else:
-        info_list = buy.Pars_Gecko(answer)  # цифры тоже отображают страницу!!!!
+        info_list = buy.pars_gecko(answer)  # цифры тоже отображают страницу!!!!
         if isinstance(info_list, list):
             await state.update_data(token=info_list[0])
             await state.update_data(price=info_list[1])
@@ -157,7 +157,7 @@ async def choice(message: types.Message, state=FSMContext):
         await state.finish()
     else:
         await state.update_data(token=answer)
-        price = buy.Pars_Gecko(answer[:answer.find('(')])
+        price = buy.pars_gecko(answer[:answer.find('(')])
         await state.update_data(price=price[1])
         await message.answer('Выберите изменение в: 1.Токенах; 2.Долларах')
         await Sell.q2.set()

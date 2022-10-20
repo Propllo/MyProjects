@@ -35,7 +35,7 @@ def refresh(id: int):
             for name_i in lst_name:
                 name_i = name_i[0]
                 name_i = name_i[:name_i.find('(')]
-                lst_info = buy.Pars_Gecko(name_i)
+                lst_info = buy.pars_gecko(name_i)
                 if isinstance(lst_info, list):
                     name_i = lst_info[0]
                     price = lst_info[1]
